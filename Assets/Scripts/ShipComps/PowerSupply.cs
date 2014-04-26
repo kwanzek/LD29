@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PowerSupply : ShipComponent {
 
+	public int capacity;
+	public int usage;
+
 	// Use this for initialization
 	void Start () {
 	

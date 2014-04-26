@@ -14,6 +14,11 @@ public class CircuitConnection : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+		foreach(GameObject obj in connectedPieces)
+		{
+
+		}
+
 	}
 
 	public void addConnectedPiece(GameObject addedComponent)

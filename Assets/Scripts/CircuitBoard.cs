@@ -11,6 +11,9 @@ public class CircuitBoard : MonoBehaviour {
 	private Vector2 initialClickLocation;
 
 	public GameObject connectionPrefab;
+	public GameObject circuitboardPrefab;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -31,6 +34,8 @@ public class CircuitBoard : MonoBehaviour {
 		}
 
 		currentConnection = null;
+
+		GameObject  q = (GameObject) Instantiate(circuitboardPrefab, new Vector3(404f,.85f, 0f), Quaternion.identity);
 
 		Debug.Log (shipComponents.Count);
 	}
@@ -107,8 +112,10 @@ public class CircuitBoard : MonoBehaviour {
 
 				}
 
+				//is there enough power?
+				//do you have power?
 
-				if(initialBlock == null || endBlock == null)
+				if(initialBlock == null || endBlock == null || (initialBlock == endBlock))
 				{
 					GameObject.Destroy(currentConnection);
 				}
