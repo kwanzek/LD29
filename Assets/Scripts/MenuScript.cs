@@ -10,7 +10,7 @@ public class MenuScript : MonoBehaviour {
 
 
 	private List<GameObject> mainMenuObjectList = new List<GameObject>();
-	private IList<GameObject> creditsMenuObjectList = new List<GameObject>();
+	private List<GameObject> creditsMenuObjectList = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {

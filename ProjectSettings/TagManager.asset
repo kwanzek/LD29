@@ -5,6 +5,9 @@ TagManager:
   tags:
   - Credits
   - MainMenu
+  - PowerSupply
+  - Thruster
+  - CircuitBoard
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
