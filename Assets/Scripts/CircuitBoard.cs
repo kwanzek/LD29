@@ -30,6 +30,8 @@ public class CircuitBoard : MonoBehaviour {
 	private int tileX = 64;
 	private int tileY = 64;
 
+	public GameObject actualGraphic;
+
 	// Use this for initialization
 	void Start () {
 
@@ -52,11 +54,26 @@ public class CircuitBoard : MonoBehaviour {
 
 		currentConnection = null;*/
 
-		GameObject  q = (GameObject) Instantiate(circuitboardPrefab, new Vector3(screenWidth/2-circuitBoardWidth/2,
+		actualGraphic = (GameObject) Instantiate(circuitboardPrefab, new Vector3(screenWidth/2-circuitBoardWidth/2,
 		                                                                         0, 0f), Quaternion.identity);
 
 	}
+
 	
+	public void translateAll(float x, float y)
+	{
+		foreach(GameObject obj in componentArray)
+		{
+			if(obj!=null)
+			{
+				obj.transform.position = new Vector2(obj.transform.position.x+x,
+				                                     obj.transform.position.y+y);
+			}
+		}
+		actualGraphic.transform.position = new Vector2(this.transform.position.x+x,
+		                                      this.transform.position.y+y);
+	}
+
 	// Update is called once per frame
 	void Update () {
 	

@@ -86,6 +86,7 @@ GameObject:
   - 92: {fileID: 43168669}
   - 124: {fileID: 43168668}
   - 81: {fileID: 43168667}
+  - 114: {fileID: 43168672}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -154,6 +155,20 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!114 &43168672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 43168666}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc88b9f1833899c4a888b842ea25a6b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxXAndY: {x: 100000, y: 1e+06}
+  minXAndY: {x: -100000, y: -1e+06}
+  player: {fileID: 0}
 --- !u!1 &1629733010
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,6 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34f79438ac9976c449538e4db9e71758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  circuitConnections: []
   connectionPrefab: {fileID: 100000, guid: 446a562c83d33ed4c98d542545659543, type: 2}
   circuitboardPrefab: {fileID: 100000, guid: ef490a3151bba2a4d82d8a5ba34ed7c7, type: 2}
   circuitPassthroughPrefab: {fileID: 100000, guid: 5f5ce001095084c41906a7791295659a,

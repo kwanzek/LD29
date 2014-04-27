@@ -35,4 +35,5 @@ public class CircuitConnection : MonoBehaviour {
 	{
 		return connectedPieces;
 	}
+
 }

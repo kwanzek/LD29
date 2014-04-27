@@ -81,9 +81,9 @@ public class Spaceship : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_speed = 150;
+		_speed = 50;
 		_rotation_speed = 90;
-		_maxSpeed = 200;
+		_maxSpeed = 100;
 
 		maxWidth = calculateMaxWidth();
 		maxHeight = calculateMaxHeight();
@@ -148,12 +148,25 @@ public class Spaceship : MonoBehaviour {
 		}
 
 		circuitBoardScript.setGameObjectArray(ref shipMap, ref maxWidth, ref maxHeight);
+
+
+
+		//this.transform.position = new Vector2(1.736f, -125.52f);
+
+		//FollowShip temp = Camera.main.GetComponent("FollowShip") as FollowShip;
+		//temp.player = this.transform;
+		//temp.circuitBoardScript = circuitBoardScript;
+		//temp.enabled = true;
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 		GameObject[,] circuitArray = circuitBoardScript.componentArray;
+
+		int numThrusters = 0;
+
 		foreach(GameObject obj in circuitArray)
 		{
 			if(obj != null)
@@ -169,17 +182,32 @@ public class Spaceship : MonoBehaviour {
 					{
 						if(obj.name.Contains("thruster"))
 						{
-							Debug.Log ("MOVEFORWARD");
+							//Debug.Log ("MOVEFORWARD");
+							numThrusters+=1;
 						}
 						else if(obj.name.Contains("gun"))
 						{
-							Debug.Log ("SHOOT");
+							//Debug.Log ("SHOOT");
 						}
 
 					}
 				}
 
 			}
+		}
+		if(numThrusters > 0)
+		{
+			foreach(GameObject obj in componentArray)
+			{
+				if(obj != null)
+				{
+					obj.transform.position = new Vector2(obj.transform.position.x,
+					                                      obj.transform.position.y +(_speed*numThrusters*Time.deltaTime));
+				}
+			}
+			this.transform.position = new Vector2(this.transform.position.x,
+			                                      this.transform.position.y +(_speed*numThrusters*Time.deltaTime));
+			//Debug.Log (this.transform.position);
 		}
 
 		//Keep the ship on the screen for now
