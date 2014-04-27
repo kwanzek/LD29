@@ -59,14 +59,12 @@ public class FollowShip : MonoBehaviour {
 		// If the player has moved beyond the x margin...
 		if(CheckXMargin())
 		{
-			Debug.Log("XCHANGED");
 			// ... the target x coordinate should be a Lerp between the camera's current x position and the player's current x position.
 			targetX = Mathf.Lerp(transform.position.x, player.position.x, xSmooth * Time.deltaTime);
 		}
 
 		if(CheckYMargin())
 		{
-			Debug.Log("YCHANGED");
 			// ... the target x coordinate should be a Lerp between the camera's current x position and the player's current x position.
 			targetY = Mathf.Lerp(transform.position.x, player.position.x, xSmooth * Time.deltaTime);
 		}

@@ -15,6 +15,7 @@ public class ShipComponent : MonoBehaviour {
 	public int _mass;
 	public int _damageLevel;
 	public int _powerType;
+	public int _numConnections;
 
 	public GameObject parent;
 	public GameObject powerSupply;

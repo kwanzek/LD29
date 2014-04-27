@@ -169,6 +169,7 @@ MonoBehaviour:
   maxXAndY: {x: 100000, y: 1e+06}
   minXAndY: {x: -100000, y: -1e+06}
   player: {fileID: 0}
+  circuitBoardScript: {fileID: 0}
 --- !u!1 &1629733010
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +201,8 @@ MonoBehaviour:
   circuitConnections: []
   connectionPrefab: {fileID: 100000, guid: 446a562c83d33ed4c98d542545659543, type: 2}
   circuitboardPrefab: {fileID: 100000, guid: ef490a3151bba2a4d82d8a5ba34ed7c7, type: 2}
+  graphicConnectionPrefab: {fileID: 100000, guid: e8d068983f3b32448b285e8fe1e6ad6d,
+    type: 2}
   circuitPassthroughPrefab: {fileID: 100000, guid: 5f5ce001095084c41906a7791295659a,
     type: 2}
   circuitGunPrefab: {fileID: 100000, guid: 7fc1d43d6967a8c4db8e02210b8bac73, type: 2}
@@ -233,6 +236,7 @@ MonoBehaviour:
   powersupplyPrefab: {fileID: 100000, guid: c646355340dd39e49a19a7f563a5a990, type: 2}
   thrusterPrefab: {fileID: 100000, guid: 54954228e5543bf49a9a4944d75580a9, type: 2}
   gunPrefab: {fileID: 100000, guid: 7fc1d43d6967a8c4db8e02210b8bac73, type: 2}
+  followship: {fileID: 0}
   maxWidth: 0
   maxHeight: 0
 --- !u!1 &1947520067
@@ -281,7 +285,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1947520067}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.2976074, y: -109.725861, z: 0}
-  m_LocalScale: {x: 1.00196803, y: 1.00196862, z: 1}
+  m_LocalPosition: {x: -311.641113, y: 44.5938721, z: 0}
+  m_LocalScale: {x: 3.4801302, y: 3.4801445, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

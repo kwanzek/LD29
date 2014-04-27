@@ -6,13 +6,14 @@ public class CircuitBoard : MonoBehaviour {
 
 	public GameObject[,] componentArray;
 	private int[,] shipMap;
-	public List<CircuitConnection> circuitConnections = new List<CircuitConnection>();
+	public List<GameObject> circuitConnections = new List<GameObject>();
 
 	private GameObject currentConnection;
 	private Vector2 initialClickLocation;
 
 	public GameObject connectionPrefab;
 	public GameObject circuitboardPrefab;
+	public GameObject graphicConnectionPrefab;
 
 	public GameObject circuitPassthroughPrefab;
 	public GameObject circuitGunPrefab;
@@ -30,7 +31,9 @@ public class CircuitBoard : MonoBehaviour {
 	private int tileX = 64;
 	private int tileY = 64;
 
-	public GameObject actualGraphic;
+	private int timestamp = 1;
+
+	private GameObject actualGraphic;
 
 	// Use this for initialization
 	void Start () {
@@ -70,13 +73,35 @@ public class CircuitBoard : MonoBehaviour {
 				                                     obj.transform.position.y+y);
 			}
 		}
+
+		foreach(GameObject obj in circuitConnections)
+		{
+			if(obj != null)
+			{
+				obj.transform.position = new Vector2(obj.transform.position.x+x,
+				                                     obj.transform.position.y+y);
+
+			}
+		}
+
 		actualGraphic.transform.position = new Vector2(actualGraphic.transform.position.x+x,
 		                                      actualGraphic.transform.position.y+y);
+
+		initialClickLocation = new Vector2(initialClickLocation.x + x, initialClickLocation.y + y);
 	}
 
 	// Update is called once per frame
 	void Update () {
 	
+		/*foreach(GameObject obj in circuitConnections)
+		{
+			if(obj != null)
+			{
+				CircuitConnection circ = obj.GetComponent("CircuitConnection") as CircuitConnection;
+				Debug.Log (circ.getConnectedPieces().Count + " , timestamp: " + circ.timeStamp);
+			}
+		}*/
+
 		if(currentConnection!=null)
 		{
 
@@ -148,9 +173,6 @@ public class CircuitBoard : MonoBehaviour {
 
 				}
 
-				//is there enough power?
-				//do you have power?
-
 				if(initialBlock == null || endBlock == null || (initialBlock == endBlock))
 				{
 					GameObject.Destroy(currentConnection);
@@ -158,9 +180,6 @@ public class CircuitBoard : MonoBehaviour {
 				else
 				{
 					//breadth first search of space to construct connections along grid
-					//CircuitConnection cirConScript = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
-					//cirConScript.addConnectedPiece(endBlock);
-					//cirConScript.addConnectedPiece(initialBlock);
 					GameObject.Destroy(currentConnection);
 					breadthFirstPath(initialBlock, endBlock);
 				}
@@ -182,6 +201,85 @@ public class CircuitBoard : MonoBehaviour {
 
 
 		}
+
+
+
+		//Deleting connections
+
+
+		if(Input.GetMouseButtonDown(1))
+		{
+			Vector3 mouseDownLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition );
+			List<GameObject> toBeRemoved = new List<GameObject>();
+
+			GameObject importantPiece = null;
+
+			foreach (GameObject obj in circuitConnections)
+			{
+				Bounds objBoundingBox = obj.renderer.bounds;
+				Vector3 objExtents = objBoundingBox.extents;
+				
+				Rect objBoundingRect = new Rect(objBoundingBox.center.x-objExtents.x, 
+				                                objBoundingBox.center.y-objExtents.y, objExtents.x*2, objExtents.y*2);
+
+				if(objBoundingRect.Contains(mouseDownLocation))
+				{
+
+					CircuitConnection clickLocScript = obj.GetComponent("CircuitConnection") as CircuitConnection;
+					int tempTimestamp = clickLocScript.timeStamp;
+
+					foreach(GameObject anotherObj in circuitConnections)
+					{
+
+						CircuitConnection circCon = anotherObj.GetComponent("CircuitConnection") as CircuitConnection;
+						if(circCon.timeStamp == tempTimestamp)
+						{
+
+							foreach(GameObject connpiece in circCon.getConnectedPieces())
+							{
+								if(!connpiece.name.Contains("powersupply") && !connpiece.name.Contains("passthrough"))
+								{
+									//Debug.Log ("Found an important part");
+									importantPiece = connpiece;
+									break;
+								}
+							}
+
+							toBeRemoved.Add (anotherObj);
+						}
+					}
+					break;
+				}
+			}
+
+			foreach(GameObject tempObj in toBeRemoved)
+			{
+				circuitConnections.Remove(tempObj);
+				CircuitConnection circCon = tempObj.GetComponent("CircuitConnection") as CircuitConnection;
+				//Debug.Log (importantPiece.name);
+
+
+
+
+
+
+				circCon.depower(importantPiece);
+
+			}
+
+			foreach(GameObject tempObj in toBeRemoved)
+			{
+				Destroy(tempObj);
+			}
+		}
+
+
+
+
+
+
+
+
 	}
 
 	public void setGameObjectArray(ref int[,] map, ref int maxWidth, ref int maxHeight)
@@ -212,15 +310,16 @@ public class CircuitBoard : MonoBehaviour {
 
 
 				//IMPORTANT STUFF HERE
-
-				if(beginningObject.name.Contains("powersupply"))
+				bool canCreateConnection = false;
+				if(beginningObject.name.Contains("powersupply") && !endingObject.name.Contains("passthrough"))
 				{
 					PowerSupply powerScript = beginningObject.GetComponent("PowerSupply") as PowerSupply;
 					if(powerScript.addNode(endingObject))
 					{
 						nodeScript.powerSupply =beginningObject;
-						nodeScript._powerLevel = 100;
+						nodeScript._powerLevel += 100;
 						Debug.Log ("LINK CREATED");
+						canCreateConnection = true;
 					}
 					else
 					{
@@ -228,12 +327,51 @@ public class CircuitBoard : MonoBehaviour {
 					}
 
 				}
-				//ending
-				while(tempNode != beginningObject)
+				if(canCreateConnection)
 				{
-					//create connection
-					ShipComponent nodeScript2 = tempNode.GetComponent("ShipComponent") as ShipComponent;
-					tempNode = nodeScript2.parent;
+					//ending
+					while(tempNode != beginningObject)
+					{
+						//create connection
+						ShipComponent nodeScript2 = tempNode.GetComponent("ShipComponent") as ShipComponent;
+
+						Vector2 difference = new Vector2(tempNode.transform.position.x - nodeScript2.parent.transform.position.x,
+						                                 tempNode.transform.position.y - nodeScript2.parent.transform.position.y);
+
+
+						Vector2 midpoint = new Vector2((tempNode.transform.position.x + nodeScript2.parent.transform.position.x) / 2,
+						                               (tempNode.transform.position.y + nodeScript2.parent.transform.position.y)/2);
+
+
+						GameObject connection = (GameObject)Instantiate(graphicConnectionPrefab, 
+						                                                new Vector3(midpoint.x, midpoint.y, 0),
+						                                                Quaternion.identity);
+
+						CircuitConnection circuitConnection = connection.GetComponent("CircuitConnection") as CircuitConnection;
+
+
+						float angle = Mathf.Atan2(difference.y , difference.x);
+
+						
+						angle = angle*Mathf.Rad2Deg+90;
+
+						connection.transform.position = new Vector3(midpoint.x, midpoint.y, 0);
+						connection.transform.eulerAngles = new Vector3(0.0f, 0.0f, angle);
+						connection.transform.localScale = new Vector3(2.0f, 1.0f, 1.0f);
+
+						circuitConnection.addConnectedPiece(tempNode);
+						circuitConnection.addConnectedPiece(nodeScript2.parent);
+						circuitConnection.timeStamp = timestamp;
+
+						nodeScript2._numConnections++;
+						ShipComponent anotherTemp = nodeScript2.parent.GetComponent("ShipComponent") as ShipComponent;
+						anotherTemp._numConnections++;
+
+						circuitConnections.Add(connection);
+						tempNode = nodeScript2.parent;
+
+					}
+					timestamp++;
 				}
 			}
 
