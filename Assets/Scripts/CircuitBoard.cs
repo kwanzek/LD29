@@ -21,9 +21,9 @@ public class CircuitBoard : MonoBehaviour {
 	public GameObject circuitThrusterPrefab;
 
 	private int circuitBoardWidth = 300;
-	private int circuitBoardHeight = 720;
+	//private int circuitBoardHeight = 720;
 	private int screenWidth = 1280;
-	private int screenHeight = 720;
+	//private int screenHeight = 720;
 
 	private int maxWidth;
 	private int maxHeight;
@@ -143,10 +143,10 @@ public class CircuitBoard : MonoBehaviour {
 
 			if(Input.GetMouseButtonUp(0))
 			{
-				CircuitConnection cirConnect = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
+				//CircuitConnection cirConnect = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
 
 				Vector3 mouseUpLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition );
-				Vector2 mouseUpVector2 = new Vector2(mouseUpLocation.x, mouseUpLocation.y);
+				//Vector2 mouseUpVector2 = new Vector2(mouseUpLocation.x, mouseUpLocation.y);
 
 				GameObject initialBlock=null;
 				GameObject endBlock=null;
@@ -239,7 +239,6 @@ public class CircuitBoard : MonoBehaviour {
 							{
 								if(!connpiece.name.Contains("powersupply") && !connpiece.name.Contains("passthrough"))
 								{
-									//Debug.Log ("Found an important part");
 									importantPiece = connpiece;
 									break;
 								}
@@ -435,7 +434,7 @@ public class CircuitBoard : MonoBehaviour {
 		int tempTileWidth = (280 / maxWidth);
 		int tempTileHeight = tempTileWidth;
 
-		float tempTileScaleY = (float)tempTileHeight / (tileY+8);
+		//float tempTileScaleY = (float)tempTileHeight / (tileY+8);
 		float tempTileScaleX = (float)(tempTileWidth) / (tileX+8);
 
 		//Debug.Log ("TempTileWidth: " + tempTileWidth + ", TempTileHeight: " + tempTileHeight);
@@ -458,8 +457,7 @@ public class CircuitBoard : MonoBehaviour {
 		for(int i = 0; i < shipMap.GetLength(0); ++i)
 		{
 			xPosition = baseXPosition;
-			
-			bool containsVal = false;
+
 			for(int j = 0; j < shipMap.GetLength(1); ++j)
 			{
 				int val = shipMap[i,j];
@@ -497,8 +495,6 @@ public class CircuitBoard : MonoBehaviour {
 					break;
 				}
 				}
-				if(val!=0)
-					containsVal = true;
 				//if(val!=0)
 				xPosition += tempTileWidth;
 				if(val!=0)

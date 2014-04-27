@@ -44,7 +44,7 @@ public class CircuitConnection : MonoBehaviour {
 				if(piece.name.Contains("powersupply"))
 			 	{
 					PowerSupply shipComp = piece.GetComponent("PowerSupply") as PowerSupply;
-					bool holder = shipComp.removeNode(importantPiece);
+					shipComp.removeNode(importantPiece);
 
 				}
 				else

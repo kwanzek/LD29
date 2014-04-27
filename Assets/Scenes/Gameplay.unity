@@ -170,6 +170,69 @@ MonoBehaviour:
   minXAndY: {x: -100000, y: -1e+06}
   player: {fileID: 0}
   circuitBoardScript: {fileID: 0}
+--- !u!1 &1608374065
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1608374067}
+  - 212: {fileID: 1608374066}
+  - 114: {fileID: 1608374068}
+  m_Layer: 0
+  m_Name: squid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1608374066
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1608374065}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+  m_Sprite: {fileID: 21300000, guid: 1204f39cffd6ddc42ae6d202fc4735be, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+--- !u!4 &1608374067
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1608374065}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -429.43399, y: 228.653168, z: 0}
+  m_LocalScale: {x: .724189401, y: .724189699, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!114 &1608374068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1608374065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef8580a1d3476447a1dff3083f98567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetPoint: {x: 0, y: 0}
 --- !u!1 &1629733010
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,11 +295,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 764d0512cc498ef418bcbdff4ac50572, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  passthroughPrefab: {fileID: 100000, guid: 5f5ce001095084c41906a7791295659a, type: 2}
-  powersupplyPrefab: {fileID: 100000, guid: c646355340dd39e49a19a7f563a5a990, type: 2}
-  thrusterPrefab: {fileID: 100000, guid: 54954228e5543bf49a9a4944d75580a9, type: 2}
-  gunPrefab: {fileID: 100000, guid: 7fc1d43d6967a8c4db8e02210b8bac73, type: 2}
-  followship: {fileID: 0}
+  passthroughPrefab: {fileID: 100000, guid: 34cc74e502d2ad0468c632974029f167, type: 2}
+  powersupplyPrefab: {fileID: 100000, guid: 69d170d9d6e07124a883924b29d183ca, type: 2}
+  thrusterPrefab: {fileID: 100000, guid: a5c52efbfed26c14fa3a6a0b6237e041, type: 2}
+  gunPrefab: {fileID: 100000, guid: 71ef124fabee48048ba7b6adbd1eceb1, type: 2}
+  missilePrefab: {fileID: 100000, guid: 98187517d12c4cd448791c502c94f31e, type: 2}
   maxWidth: 0
   maxHeight: 0
 --- !u!1 &1947520067

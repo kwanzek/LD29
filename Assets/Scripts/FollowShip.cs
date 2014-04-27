@@ -8,7 +8,7 @@ public class FollowShip : MonoBehaviour {
 	private float xMargin = 1f;		// Distance in the x axis the player can move before the camera follows.
 	private float yMargin = 1f;		// Distance in the y axis the player can move before the camera follows.
 	private float xSmooth = 1f;		// How smoothly the camera catches up with it's target movement in the x axis.
-	private float ySmooth = 1f;		// How smoothly the camera catches up with it's target movement in the y axis.
+	//private float ySmooth = 1f;		// How smoothly the camera catches up with it's target movement in the y axis.
 	public Vector2 maxXAndY;		// The maximum x and y coordinates the camera can have.
 	public Vector2 minXAndY;		// The minimum x and y coordinates the camera can have.
 	

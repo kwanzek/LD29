@@ -17,11 +17,13 @@ public class Spaceship : MonoBehaviour {
 	public GameObject powersupplyPrefab;
 	public GameObject thrusterPrefab;
 	public GameObject gunPrefab;
+	public GameObject missilePrefab;
 
-	public FollowShip followship;
 
-	private int tileX = 64;
-	private int tileY = 64;
+	private FollowShip followship;
+
+	private int tileX = 32;
+	private int tileY = 32;
 
 	int[,] shipMap = new int[,]
 	{
@@ -97,15 +99,15 @@ public class Spaceship : MonoBehaviour {
 	
 		componentArray = new GameObject[7, 5];
 
-		int xPosition = -300;
-		int yPosition = 200;
+		int xPosition = -100;
+		int yPosition = 100;
 
 		circuitBoardScript = GetComponent("CircuitBoard") as CircuitBoard;
 
 
 		for(int i = 0; i < shipMap.GetLength(0); ++i)
 		{
-			xPosition = -300;
+			xPosition = -200;
 			for(int j = 0; j < shipMap.GetLength(1); ++j)
 			{
 
@@ -164,7 +166,16 @@ public class Spaceship : MonoBehaviour {
 		//temp.enabled = true;
 
 	}
-	
+
+
+
+
+
+
+
+
+
+
 	// Update is called once per frame
 	void Update () {
 
@@ -200,6 +211,8 @@ public class Spaceship : MonoBehaviour {
 
 			}
 		}
+
+		//Movement
 		if(numThrusters > 0)
 		{
 			foreach(GameObject obj in componentArray)
@@ -219,25 +232,56 @@ public class Spaceship : MonoBehaviour {
 			//Debug.Log (this.transform.position);
 		}
 
-		//Keep the ship on the screen for now
+		//Firing
+		foreach(GameObject obj in circuitArray)
+		{
+			if(obj!=null)
+			{
+				if(obj.name.Contains("gun"))
+				{
+					Gun gunScript = obj.GetComponent("Gun") as Gun;
+					if(gunScript._powerLevel > 0)
+					{
+				
+						if(gunScript.interval <= 0.0)
+						{
+							Debug.Log ("made missile");
 
-		//this.transform.position = new Vector2(this.transform.position.x + (_speed)*Time.deltaTime,
-		//                                      this.transform.position.y + (_speed)*Time.deltaTime*0);
+							GameObject mirror = componentArray[gunScript.index_Row, gunScript.index_Column];
 
-		//this.transform.Rotate(Vector3.forward * _rotation_speed*Time.deltaTime);
+							GameObject missile = (GameObject)Instantiate(missilePrefab, 
+							                                             new Vector3(mirror.transform.position.x, 
+							            									mirror.transform.position.y,
+							            											0),
+							                                             mirror.transform.rotation);
 
+							MissileScript missileScript = missile.GetComponent("MissileScript") as MissileScript;
+							missileScript.angleVector = missile.transform.localEulerAngles;
+							
+							gunScript.interval = gunScript.intervalBase;
+						}
+						
+						gunScript.interval -= Time.deltaTime;
 
-		/*
-		float widthRel = (48*3) / (Screen.width); //relative width
-		float heightRel= (32) /(Screen.height); //relative height
-		
-		Vector3 viewPos = Camera.main.WorldToViewportPoint (this.transform.position);
-		viewPos.x = Mathf.Clamp(viewPos.x, widthRel, 1-widthRel);
-		viewPos.y = Mathf.Clamp(viewPos.y, heightRel, 1-heightRel);
-		this.transform.position = Camera.main.ViewportToWorldPoint (viewPos);
-
-		*/
+					}
+				}
+			}
+		}
 
 
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

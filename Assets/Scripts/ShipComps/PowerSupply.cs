@@ -22,10 +22,6 @@ public class PowerSupply : ShipComponent {
 	public bool addNode(GameObject node)
 	{
 
-		ShipComponent shipcomp = node.GetComponent("ShipComponent") as ShipComponent;
-		Debug.Log (shipcomp.index_Row + ", " + shipcomp.index_Column);
-
-
 		if(usage < capacity && !suppliedNodes.Contains(node))
 		{
 			suppliedNodes.Add (node);
@@ -38,16 +34,10 @@ public class PowerSupply : ShipComponent {
 	public bool removeNode(GameObject node)
 	{
 
-		Debug.Log ("FUCKING: "+ node.name);
-		//ShipComponent shipcomp = node.GetComponent("ShipComponent") as ShipComponent;
-		//Debug.Log (shipcomp.index_Row + ", " + shipcomp.index_Column);
-
 
 		if(usage > 0)
 		{
-			bool bbb = suppliedNodes.Remove(node);
-			Debug.Log ("WHAT?: "+ suppliedNodes.Count + ", " + bbb);
-			Debug.Log ("HIIII: "+ suppliedNodes.Contains(node));
+			suppliedNodes.Remove(node);
 			usage-=1;
 			return true;
 		}
