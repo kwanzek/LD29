@@ -11,7 +11,7 @@ public class ShipComponent : MonoBehaviour {
 	//Rotation
 	//Damage level
 
-	public int _inputLevel;
+	public int _powerLevel;
 	public int _mass;
 	public int _damageLevel;
 	public int _powerType;
@@ -19,13 +19,13 @@ public class ShipComponent : MonoBehaviour {
 	public GameObject parent;
 	public GameObject powerSupply;
 
-	public int index_X;
-	public int index_Y;
+	public int index_Row;
+	public int index_Column;
 
 	// Use this for initialization
 	void Start () {
 	
-		_inputLevel = 0;
+		_powerLevel = 0;
 
 	}
 	
@@ -36,7 +36,7 @@ public class ShipComponent : MonoBehaviour {
 
 	public bool equals(ShipComponent other)
 	{
-		if(this.index_X == other.index_X && this.index_Y == other.index_Y)
+		if(this.index_Row == other.index_Row && this.index_Column == other.index_Column)
 			return true;
 		else return false;
 	}

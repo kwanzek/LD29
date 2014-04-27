@@ -23,11 +23,13 @@ public class Spaceship : MonoBehaviour {
 
 	int[,] shipMap = new int[,]
 	{
-		{0,4,0},
-		{0,1,0},
-		{0,1,0},
-		{3,2,3},
-		{0,1,0}
+		{0,0,0,0,0},
+		{0,0,4,0,0},
+		{0,0,1,0,0},
+		{0,0,1,0,0},
+		{0,3,2,3,0},
+		{0,0,1,0,0},
+		{0,0,0,0,0},
 	};
 
 	public int maxWidth;
@@ -36,87 +38,149 @@ public class Spaceship : MonoBehaviour {
 
 	private CircuitBoard circuitBoardScript;
 
+	private int calculateMaxWidth()
+	{
+		int count =0;
+		int maxCount = 0;
+		for(int i = 0; i < shipMap.GetLength(0); ++i)
+		{
+			count = 0;
+			for(int j = 0; j < shipMap.GetLength(1); ++j)
+			{
+				if(shipMap[i,j] != 0)
+				{
+					count++;
+				}
+			}
+			if(count > maxCount)
+				maxCount = count;
+		}
+		return maxCount;
+	}
+
+	private int calculateMaxHeight()
+	{
+		int count =0;
+		int maxCount = 0;
+
+		for(int i = 0; i < shipMap.GetLength(1); ++i)
+		{
+			count = 0;
+			for(int j = 0; j < shipMap.GetLength(0); ++j)
+			{
+				if(shipMap[j,i] != 0)
+				{
+					count++;
+				}
+			}
+			if(count > maxCount)
+				maxCount = count;
+		}
+		return maxCount;
+	}
+
 	// Use this for initialization
 	void Start () {
 		_speed = 150;
 		_rotation_speed = 90;
 		_maxSpeed = 200;
 
-		maxWidth = shipMap.GetLength(0);
-		maxHeight = shipMap.GetLength (1);
+		maxWidth = calculateMaxWidth();
+		maxHeight = calculateMaxHeight();
 
-		componentArray = new GameObject[maxWidth, maxHeight];
+		//Debug.Log ("ShipComponentLength0: "+ shipMap.GetLength(0) + ", shipcomponentLength1: "+ shipMap.GetLength(1));
 
-		int xPosition = -200;
-		int yPosition = -200;
+
+		//Debug.Log ("MaxWidth: " + maxWidth + ", maxHeight: " + maxHeight);
+	
+		componentArray = new GameObject[7, 5];
+
+		int xPosition = -300;
+		int yPosition = 200;
 
 		circuitBoardScript = GetComponent("CircuitBoard") as CircuitBoard;
 
-		for(int i=shipMap.GetLength(0)-1; i >= 0; --i)
+
+		for(int i = 0; i < shipMap.GetLength(0); ++i)
 		{
-			
-			xPosition = -200;
-			for(int j=shipMap.GetLength(1)-1; j >= 0; --j)
+			xPosition = -300;
+			for(int j = 0; j < shipMap.GetLength(1); ++j)
 			{
+
 				int val = shipMap[i,j];
 				switch(val)
 				{
-					case 1:
-					{
-						componentArray[i,j] = (GameObject)Instantiate(passthroughPrefab, 
-						                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
-						break;
-					}
-					case 2:
-					{
-						componentArray[i,j] = (GameObject)Instantiate(powersupplyPrefab, 
-						                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
-
-						break;
-					}
-					case 3:
-					{
-						componentArray[i,j] = (GameObject)Instantiate(thrusterPrefab, 
-						                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
-
-						break;
-					}
-					case 4:
-					{
-						componentArray[i,j] = (GameObject)Instantiate(gunPrefab, 
-						                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
-
-						break;
-					}
-					default:
-					{
-						break;
-					}
+				case 1:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(passthroughPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					break;
 				}
-
+				case 2:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(powersupplyPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				case 3:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(thrusterPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				case 4:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(gunPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
 				xPosition += tileX;
-
 			}
-			yPosition += tileY;
+			yPosition -= tileY;
 		}
 
-		/*
-		for(int i = 0; i < componentArray.GetLength (0); ++i)
-		{
-			for(int j = 0; j < componentArray.GetLength(1); ++j)
-			{
-				if(componentArray[i,j] != null)
-					Debug.Log (componentArray[i,j].name);
-			}
-		}*/
-
-		circuitBoardScript.setGameObjectArray(ref shipMap);
+		circuitBoardScript.setGameObjectArray(ref shipMap, ref maxWidth, ref maxHeight);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		GameObject[,] circuitArray = circuitBoardScript.componentArray;
+		foreach(GameObject obj in circuitArray)
+		{
+			if(obj != null)
+			{
+				if(obj.name.Contains("powersupply"))
+				{
 
+				}
+				else
+				{
+					ShipComponent compScript = obj.GetComponent("ShipComponent") as ShipComponent;
+					if(compScript._powerLevel > 0)
+					{
+						if(obj.name.Contains("thruster"))
+						{
+							Debug.Log ("MOVEFORWARD");
+						}
+						else if(obj.name.Contains("gun"))
+						{
+							Debug.Log ("SHOOT");
+						}
+
+					}
+				}
+
+			}
+		}
 
 		//Keep the ship on the screen for now
 

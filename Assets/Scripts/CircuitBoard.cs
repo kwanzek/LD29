@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class CircuitBoard : MonoBehaviour {
 
-	private GameObject[,] componentArray;
+	public GameObject[,] componentArray;
 	private int[,] shipMap;
-	private List<CircuitConnection> circuitConnections = new List<CircuitConnection>();
+	public List<CircuitConnection> circuitConnections = new List<CircuitConnection>();
 
 	private GameObject currentConnection;
 	private Vector2 initialClickLocation;
@@ -141,9 +141,10 @@ public class CircuitBoard : MonoBehaviour {
 				else
 				{
 					//breadth first search of space to construct connections along grid
-					CircuitConnection cirConScript = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
-					cirConScript.addConnectedPiece(endBlock);
-					cirConScript.addConnectedPiece(initialBlock);
+					//CircuitConnection cirConScript = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
+					//cirConScript.addConnectedPiece(endBlock);
+					//cirConScript.addConnectedPiece(initialBlock);
+					GameObject.Destroy(currentConnection);
 					breadthFirstPath(initialBlock, endBlock);
 				}
 
@@ -166,10 +167,10 @@ public class CircuitBoard : MonoBehaviour {
 		}
 	}
 
-	public void setGameObjectArray(ref int[,] map)
+	public void setGameObjectArray(ref int[,] map, ref int maxWidth, ref int maxHeight)
 	{
 		shipMap = map;
-		setupCircuitBoard();
+		setupCircuitBoard(maxWidth, maxHeight);
 	}
 
 	private void breadthFirstPath(GameObject beginningObject, GameObject endingObject)
@@ -186,35 +187,49 @@ public class CircuitBoard : MonoBehaviour {
 			GameObject expandedNode = Q.Dequeue();
 			ShipComponent script = expandedNode.GetComponent("ShipComponent") as ShipComponent;
 
-			Debug.Log (script.index_X + ", " + script.index_Y);
-
 			if(expandedNode == endingObject)
 			{
 				GameObject tempNode = endingObject;
 
 				ShipComponent nodeScript = tempNode.GetComponent("ShipComponent") as ShipComponent;
 
-				nodeScript.powerSupply =beginningObject;
-				Debug.Log ("Powersupply: " + nodeScript.index_X + ", " + nodeScript.index_Y);
+
+				//IMPORTANT STUFF HERE
+
+				if(beginningObject.name.Contains("powersupply"))
+				{
+					PowerSupply powerScript = beginningObject.GetComponent("PowerSupply") as PowerSupply;
+					if(powerScript.addNode(endingObject))
+					{
+						nodeScript.powerSupply =beginningObject;
+						nodeScript._powerLevel = 100;
+						Debug.Log ("LINK CREATED");
+					}
+					else
+					{
+						Debug.Log ("THIS NODE IS OVERCAPACITY, CANNOT CREATE LINK");
+					}
+
+				}
 				//ending
 				while(tempNode != beginningObject)
 				{
 					//create connection
 					ShipComponent nodeScript2 = tempNode.GetComponent("ShipComponent") as ShipComponent;
 					tempNode = nodeScript2.parent;
-
 				}
 			}
 
 			//get neighbors
-			List<GameObject> neighbors = getNeighborsOfNode(script.index_X, script.index_Y);
+			List<GameObject> neighbors = getNeighborsOfNode(script.index_Row, script.index_Column);
+			//Debug.Log ("Count: " + neighbors.Count + " index_row: " + script.index_Row + ", index_col: " + script.index_Column);
 			foreach(GameObject neighbor in neighbors)
 			{
+				//Debug.Log ("Nothing");
 				if(!V.Contains(neighbor) && neighbor != null)
 				{
 					ShipComponent neighborScript = neighbor.GetComponent("ShipComponent") as ShipComponent;
 					neighborScript.parent = expandedNode;
-					Debug.Log (neighborScript.index_X + ", " + neighborScript.index_Y);
 					V.Add(neighbor);
 					Q.Enqueue(neighbor);
 				}
@@ -244,7 +259,7 @@ public class CircuitBoard : MonoBehaviour {
 
 	private bool inBounds(int x, int y)
 	{
-		if(x>=0 && x < maxHeight && y >= 0 && y < maxWidth)
+		if(x>=0 && x < 7 && y >= 0 && y < 5)
 		{
 			return true;
 		}
@@ -256,33 +271,41 @@ public class CircuitBoard : MonoBehaviour {
 
 
 
-	private void setupCircuitBoard()
+	private void setupCircuitBoard(int maxWidth, int maxHeight)
 	{
-		maxWidth = shipMap.GetLength(0);
-		maxHeight = shipMap.GetLength (1);
 		
-		componentArray = new GameObject[maxWidth, maxHeight];
+		componentArray = new GameObject[7, 5];
 
 
-		int tempTileWidth = (280 / maxHeight);
+		int tempTileWidth = (280 / maxWidth);
 		int tempTileHeight = tempTileWidth;
 
 		float tempTileScaleY = (float)tempTileHeight / (tileY+8);
 		float tempTileScaleX = (float)(tempTileWidth) / (tileX+8);
 
-		int xOffset = (int)Mathf.Ceil(maxHeight/2.0f)-1;
-		int yOffset = (int)Mathf.Ceil(maxWidth/2.0f)-1;
+		//Debug.Log ("TempTileWidth: " + tempTileWidth + ", TempTileHeight: " + tempTileHeight);
 
+		int xOffset = (int)Mathf.Ceil(5/2.0f)-1;
+		int yOffset = (int)Mathf.Ceil(7/2.0f)-1;
+
+		//Debug.Log ("xOffset: " + xOffset + ", yOffset: " + yOffset);
 		int baseXPosition = 490-(xOffset*tempTileWidth);
+		if(maxWidth % 2 == 0)
+			baseXPosition-=(tempTileWidth/2);
+
 		int xPosition = baseXPosition;
-		int yPosition = -1*yOffset*tempTileHeight;
+
+		int yPosition = yOffset*tempTileHeight;
+
+		//Debug.Log ("xOffset: " + xOffset + ", yOffset: " + yOffset);
 
 						
-		for(int i=shipMap.GetLength(0)-1; i >= 0; --i)
+		for(int i = 0; i < shipMap.GetLength(0); ++i)
 		{
-			
 			xPosition = baseXPosition;
-			for(int j=shipMap.GetLength(1)-1; j >= 0; --j)
+			
+			bool containsVal = false;
+			for(int j = 0; j < shipMap.GetLength(1); ++j)
 			{
 				int val = shipMap[i,j];
 				switch(val)
@@ -319,17 +342,20 @@ public class CircuitBoard : MonoBehaviour {
 					break;
 				}
 				}
-				
+				if(val!=0)
+					containsVal = true;
+				//if(val!=0)
 				xPosition += tempTileWidth;
 				if(val!=0)
 				{
 					componentArray[i,j].transform.localScale = new Vector3(tempTileScaleX, tempTileScaleX, 1);
 					ShipComponent compScript = componentArray[i,j].GetComponent("ShipComponent") as ShipComponent;
-					compScript.index_X = i;
-					compScript.index_Y = j;
+					compScript.index_Row = i;
+					compScript.index_Column = j;
 				}
 			}
-			yPosition += tempTileHeight;
+			//if(containsVal)
+			yPosition -= tempTileHeight;
 		}
 	}
 }
