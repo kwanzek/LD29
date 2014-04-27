@@ -18,6 +18,8 @@ public class Spaceship : MonoBehaviour {
 	public GameObject thrusterPrefab;
 	public GameObject gunPrefab;
 
+	public FollowShip followship;
+
 	private int tileX = 64;
 	private int tileY = 64;
 
@@ -152,7 +154,10 @@ public class Spaceship : MonoBehaviour {
 
 
 		//this.transform.position = new Vector2(1.736f, -125.52f);
-
+		followship = Camera.main.GetComponent("FollowShip") as FollowShip;
+		followship.player = this.transform;
+		followship.circuitBoardScript = circuitBoardScript;
+		followship.enabled = true;
 		//FollowShip temp = Camera.main.GetComponent("FollowShip") as FollowShip;
 		//temp.player = this.transform;
 		//temp.circuitBoardScript = circuitBoardScript;
@@ -207,6 +212,10 @@ public class Spaceship : MonoBehaviour {
 			}
 			this.transform.position = new Vector2(this.transform.position.x,
 			                                      this.transform.position.y +(_speed*numThrusters*Time.deltaTime));
+
+			followship.moveSelf(0, _speed*numThrusters*Time.deltaTime);
+			circuitBoardScript.translateAll(0, _speed*numThrusters*Time.deltaTime);
+
 			//Debug.Log (this.transform.position);
 		}
 

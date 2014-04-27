@@ -70,8 +70,8 @@ public class CircuitBoard : MonoBehaviour {
 				                                     obj.transform.position.y+y);
 			}
 		}
-		actualGraphic.transform.position = new Vector2(this.transform.position.x+x,
-		                                      this.transform.position.y+y);
+		actualGraphic.transform.position = new Vector2(actualGraphic.transform.position.x+x,
+		                                      actualGraphic.transform.position.y+y);
 	}
 
 	// Update is called once per frame

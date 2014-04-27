@@ -17,7 +17,7 @@ public class FollowShip : MonoBehaviour {
 	
 	void Awake () {
 	}
-	
+
 	bool CheckXMargin()
 	{
 		// Returns true if the distance between the camera and the player in the x axis is greater than the x margin.
@@ -36,8 +36,13 @@ public class FollowShip : MonoBehaviour {
 	{
 		if(player!=null)
 		{
-			TrackPlayer();
+			//TrackPlayer();
 		}
+	}
+
+	public void moveSelf(float x, float y)
+	{
+		this.transform.position = new Vector3(this.transform.position.x+x, this.transform.position.y+y, this.transform.position.z);
 	}
 	
 	void TrackPlayer ()
