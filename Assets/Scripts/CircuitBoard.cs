@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class CircuitBoard : MonoBehaviour {
 
-	private List<GameObject> shipComponents = new List<GameObject>();
+	private GameObject[,] componentArray;
+	private int[,] shipMap;
 	private List<CircuitConnection> circuitConnections = new List<CircuitConnection>();
 
 	private GameObject currentConnection;
@@ -13,16 +14,32 @@ public class CircuitBoard : MonoBehaviour {
 	public GameObject connectionPrefab;
 	public GameObject circuitboardPrefab;
 
+	public GameObject circuitPassthroughPrefab;
+	public GameObject circuitGunPrefab;
+	public GameObject circuitPowerSupplyPrefab;
+	public GameObject circuitThrusterPrefab;
 
+	private int circuitBoardWidth = 300;
+	private int circuitBoardHeight = 720;
+	private int screenWidth = 1280;
+	private int screenHeight = 720;
+
+	private int maxWidth;
+	private int maxHeight;
+
+	private int tileX = 64;
+	private int tileY = 64;
 
 	// Use this for initialization
 	void Start () {
+
+		/*
 		GameObject[] objectArray = GameObject.FindGameObjectsWithTag("Thruster");
 		
 		foreach(GameObject obj in objectArray)
 		{
 			//ShipComponent shipComp = obj.GetComponent("ShipComponent") as ShipComponent;
-			shipComponents.Add(obj);
+			//shipComponents.Add(obj);
 		}
 
 		objectArray = GameObject.FindGameObjectsWithTag("PowerSupply");
@@ -30,14 +47,14 @@ public class CircuitBoard : MonoBehaviour {
 		foreach(GameObject obj in objectArray)
 		{
 			//ShipComponent shipComp = obj.GetComponent("ShipComponent") as ShipComponent;
-			shipComponents.Add(obj);
+			//shipComponents.Add(obj);
 		}
 
-		currentConnection = null;
+		currentConnection = null;*/
 
-		GameObject  q = (GameObject) Instantiate(circuitboardPrefab, new Vector3(404f,.85f, 0f), Quaternion.identity);
+		GameObject  q = (GameObject) Instantiate(circuitboardPrefab, new Vector3(screenWidth/2-circuitBoardWidth/2,
+		                                                                         0, 0f), Quaternion.identity);
 
-		Debug.Log (shipComponents.Count);
 	}
 	
 	// Update is called once per frame
@@ -92,8 +109,10 @@ public class CircuitBoard : MonoBehaviour {
 				GameObject initialBlock=null;
 				GameObject endBlock=null;
 
-				foreach (GameObject obj in shipComponents)
+				foreach (GameObject obj in componentArray)
 				{
+					if(obj == null)
+						continue;
 					Bounds objBoundingBox = obj.renderer.bounds;
 					Vector3 objExtents = objBoundingBox.extents;
 					
@@ -121,14 +140,16 @@ public class CircuitBoard : MonoBehaviour {
 				}
 				else
 				{
+					//breadth first search of space to construct connections along grid
 					CircuitConnection cirConScript = currentConnection.GetComponent("CircuitConnection") as CircuitConnection;
 					cirConScript.addConnectedPiece(endBlock);
 					cirConScript.addConnectedPiece(initialBlock);
-					Debug.Log ("Connection length: " +cirConScript.getConnectedPieces().Count);
+					breadthFirstPath(initialBlock, endBlock);
 				}
 
 				currentConnection = null;
 			}
+
 		}
 
 		else if(currentConnection == null)
@@ -143,6 +164,172 @@ public class CircuitBoard : MonoBehaviour {
 
 
 		}
+	}
 
+	public void setGameObjectArray(ref int[,] map)
+	{
+		shipMap = map;
+		setupCircuitBoard();
+	}
+
+	private void breadthFirstPath(GameObject beginningObject, GameObject endingObject)
+	{
+		Queue<GameObject> Q = new Queue<GameObject>();
+		List<GameObject> V = new List<GameObject>();
+
+
+		Q.Enqueue(beginningObject);
+		V.Add(beginningObject);
+
+		while(Q.Count > 0)
+		{
+			GameObject expandedNode = Q.Dequeue();
+			ShipComponent script = expandedNode.GetComponent("ShipComponent") as ShipComponent;
+
+			Debug.Log (script.index_X + ", " + script.index_Y);
+
+			if(expandedNode == endingObject)
+			{
+				GameObject tempNode = endingObject;
+
+				ShipComponent nodeScript = tempNode.GetComponent("ShipComponent") as ShipComponent;
+
+				nodeScript.powerSupply =beginningObject;
+				Debug.Log ("Powersupply: " + nodeScript.index_X + ", " + nodeScript.index_Y);
+				//ending
+				while(tempNode != beginningObject)
+				{
+					//create connection
+					ShipComponent nodeScript2 = tempNode.GetComponent("ShipComponent") as ShipComponent;
+					tempNode = nodeScript2.parent;
+
+				}
+			}
+
+			//get neighbors
+			List<GameObject> neighbors = getNeighborsOfNode(script.index_X, script.index_Y);
+			foreach(GameObject neighbor in neighbors)
+			{
+				if(!V.Contains(neighbor) && neighbor != null)
+				{
+					ShipComponent neighborScript = neighbor.GetComponent("ShipComponent") as ShipComponent;
+					neighborScript.parent = expandedNode;
+					Debug.Log (neighborScript.index_X + ", " + neighborScript.index_Y);
+					V.Add(neighbor);
+					Q.Enqueue(neighbor);
+				}
+			}
+		}
+	}
+
+	private List<GameObject> getNeighborsOfNode(int x, int y)
+	{
+		List<GameObject> neighborList = new List<GameObject>();
+		int xMinus1 = x-1;
+		int yMinus1 = y-1;
+		int xPlus1 = x+1;
+		int yPlus1 = y+1;
+
+		if(inBounds(xMinus1, y))
+			neighborList.Add (componentArray[xMinus1, y]);
+		if(inBounds(xPlus1, y))
+			neighborList.Add (componentArray[xPlus1, y]);
+		if(inBounds(x, yPlus1))
+			neighborList.Add(componentArray[x, yPlus1]);
+		if(inBounds(x, yMinus1))
+			neighborList.Add (componentArray[x,yMinus1]);
+
+		return neighborList;
+	}
+
+	private bool inBounds(int x, int y)
+	{
+		if(x>=0 && x < maxHeight && y >= 0 && y < maxWidth)
+		{
+			return true;
+		}
+		else
+			return false;
+	}
+
+
+
+
+
+	private void setupCircuitBoard()
+	{
+		maxWidth = shipMap.GetLength(0);
+		maxHeight = shipMap.GetLength (1);
+		
+		componentArray = new GameObject[maxWidth, maxHeight];
+
+
+		int tempTileWidth = (280 / maxHeight);
+		int tempTileHeight = tempTileWidth;
+
+		float tempTileScaleY = (float)tempTileHeight / (tileY+8);
+		float tempTileScaleX = (float)(tempTileWidth) / (tileX+8);
+
+		int xOffset = (int)Mathf.Ceil(maxHeight/2.0f)-1;
+		int yOffset = (int)Mathf.Ceil(maxWidth/2.0f)-1;
+
+		int baseXPosition = 490-(xOffset*tempTileWidth);
+		int xPosition = baseXPosition;
+		int yPosition = -1*yOffset*tempTileHeight;
+
+						
+		for(int i=shipMap.GetLength(0)-1; i >= 0; --i)
+		{
+			
+			xPosition = baseXPosition;
+			for(int j=shipMap.GetLength(1)-1; j >= 0; --j)
+			{
+				int val = shipMap[i,j];
+				switch(val)
+				{
+				case 1:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(circuitPassthroughPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					break;
+				}
+				case 2:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(circuitPowerSupplyPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				case 3:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(circuitThrusterPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				case 4:
+				{
+					componentArray[i,j] = (GameObject)Instantiate(circuitGunPrefab, 
+					                                              new Vector3(xPosition, yPosition, 0), Quaternion.identity);
+					
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+				
+				xPosition += tempTileWidth;
+				if(val!=0)
+				{
+					componentArray[i,j].transform.localScale = new Vector3(tempTileScaleX, tempTileScaleX, 1);
+					ShipComponent compScript = componentArray[i,j].GetComponent("ShipComponent") as ShipComponent;
+					compScript.index_X = i;
+					compScript.index_Y = j;
+				}
+			}
+			yPosition += tempTileHeight;
+		}
 	}
 }

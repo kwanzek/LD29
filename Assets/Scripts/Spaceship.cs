@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Spaceship : MonoBehaviour {
 
-	private List<GameObject> components = new List<GameObject>();
-
 	private int _speed;
 	private int _rotation_speed;
 	private int _maxSpeed;
@@ -13,15 +11,15 @@ public class Spaceship : MonoBehaviour {
 
 	public enum ComponentEnum {Empty=0, Passthrough=1, PowerSupply=2, Thruster=3, Gun=4};
 
-	private GameObject[,] componentArray;
+	public GameObject[,] componentArray;
 
 	public GameObject passthroughPrefab;
 	public GameObject powersupplyPrefab;
 	public GameObject thrusterPrefab;
 	public GameObject gunPrefab;
 
-	private int tileX = 32*3;
-	private int tileY = 32*3;
+	private int tileX = 64;
+	private int tileY = 64;
 
 	int[,] shipMap = new int[,]
 	{
@@ -112,10 +110,13 @@ public class Spaceship : MonoBehaviour {
 			}
 		}*/
 
+		circuitBoardScript.setGameObjectArray(ref shipMap);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+
 
 		//Keep the ship on the screen for now
 
