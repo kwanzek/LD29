@@ -39,7 +39,7 @@ AudioSource:
   serializedVersion: 3
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: .503000021
+  m_Volume: .407999992
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -120,7 +120,7 @@ SpriteRenderer:
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 0
   m_SortingLayerID: 0
   m_Sprite: {fileID: 21300000, guid: 85ff954275d6491418d6d974be4b00fa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

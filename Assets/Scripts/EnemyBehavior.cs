@@ -96,7 +96,7 @@ public class EnemyBehavior : MonoBehaviour {
 		Vector3 tileExtents = tileBoundingBox.extents;
 		
 		Rect tileBoundingRect = new Rect(tileBoundingBox.center.x-tileExtents.x,
-		                                 tileBoundingBox.center.y-tileExtents.y, tileExtents.x*1.05f, tileExtents.y*1.15f);
+		                                 tileBoundingBox.center.y-tileExtents.y, tileExtents.x*1.15f, tileExtents.y*1.35f);
 
 
 		foreach(GameObject missile in projectiles)
@@ -106,7 +106,7 @@ public class EnemyBehavior : MonoBehaviour {
 			
 			Rect missileBoundingRect = new Rect(missileBoundingBox.center.x-missileExtents.x,
 			                                  missileBoundingBox.center.y-missileExtents.y, 
-			                                  missileExtents.x*1.6f, missileExtents.y*1.6f);
+			                                  missileExtents.x*1.8f, missileExtents.y*1.8f);
 
 			bool isIntersecting = doesIntersect(missileBoundingRect,tileBoundingRect);
 			

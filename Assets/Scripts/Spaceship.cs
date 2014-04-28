@@ -248,21 +248,9 @@ public class Spaceship : MonoBehaviour {
 						forceSum.x += forceVector.x;
 						forceSum.y += forceVector.y;
 
-						GameObject mirrorVal = componentArray[circuitComponent.index_Row, circuitComponent.index_Column];
-
-						BubbleScript bScript =  mirrorVal.GetComponent("BubbleScript") as BubbleScript;
-						bScript.enabled = true;
-
 						//massTotal += shipComponent._mass;
 						//weightedMass.x+=(obj.transform.position.x * shipComponent._mass);
 						//weightedMass.y+=(obj.transform.position.y * shipComponent._mass);
-					}
-					else
-					{
-						GameObject mirrorVal = componentArray[circuitComponent.index_Row, circuitComponent.index_Column];
-						
-						BubbleScript bScript =  mirrorVal.GetComponent("BubbleScript") as BubbleScript;
-						bScript.enabled = false;
 					}
 				}
 			}
