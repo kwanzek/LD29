@@ -33,7 +33,7 @@ public class Spaceship : MonoBehaviour {
 	private float shipAngle;
 	private float shipAngularVelocity = 18.0f;
 
-	private float coeffKineticFriction = 0.6f;
+	private float coeffKineticFriction = 0.995f;
 
 	int[,] shipMap = new int[,]
 	{
@@ -97,7 +97,7 @@ public class Spaceship : MonoBehaviour {
 	void Start () {
 		_speed = 50;
 		_rotation_speed = 90;
-		_maxSpeed = 2;
+		_maxSpeed = 10;
 
 		maxWidth = calculateMaxWidth();
 		maxHeight = calculateMaxHeight();
@@ -429,8 +429,16 @@ public class Spaceship : MonoBehaviour {
 
 
 		}
-		shipVelocity.x *= 0.99f;
-		shipVelocity.y *= 0.99f;
+
+
+
+		shipVelocity.x *= coeffKineticFriction;
+		shipVelocity.y *= coeffKineticFriction;
+
+
+
+
+
 		foreach(GameObject compObj in componentArray)
 		{
 			if(compObj != null)
