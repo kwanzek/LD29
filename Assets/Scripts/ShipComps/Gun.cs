@@ -4,11 +4,12 @@ using System.Collections;
 public class Gun : ShipComponent {
 
 	public float interval;
-	public float intervalBase = 2.0f;
+	public float intervalBase = 3.0f;
 
 	// Use this for initialization
 	void Start () {
 		interval = intervalBase;
+		intervalBase = 2.0f;
 	}
 	
 	// Update is called once per frame

@@ -8,6 +8,7 @@ public class Spaceship : MonoBehaviour {
 	private int _rotation_speed;
 	private int _maxSpeed;
 
+	public AudioClip missileShot;
 
 	public enum ComponentEnum {Empty=0, Passthrough=1, PowerSupply=2, Thruster=3, Gun=4};
 
@@ -31,7 +32,7 @@ public class Spaceship : MonoBehaviour {
 	private Vector2 shipVelocity;
 	private float acceleration = 2.0f;
 	private float shipAngle;
-	private float shipAngularVelocity = 18.0f;
+	private float shipAngularVelocity = 15.0f;
 
 	private float coeffKineticFriction = 0.995f;
 
@@ -97,7 +98,7 @@ public class Spaceship : MonoBehaviour {
 	void Start () {
 		//_speed = 50;
 		//_rotation_speed = 90;
-		_maxSpeed = 10;
+		_maxSpeed = 3;
 
 		maxWidth = calculateMaxWidth();
 		maxHeight = calculateMaxHeight();
@@ -514,7 +515,8 @@ public class Spaceship : MonoBehaviour {
 		GameObject console = GameObject.FindGameObjectWithTag("Console");
 
 		console.transform.Translate(new Vector3(newLoc.x, newLoc.y, 0));
-		
+
+		this.transform.position = new Vector3(centerofMass.x, centerofMass.y, 0);
 		//Debug.Log (shipVelocity);
 
 
@@ -568,6 +570,9 @@ public class Spaceship : MonoBehaviour {
 							missileScript.angleVector = missile.transform.localEulerAngles;
 							
 							gunScript.interval = gunScript.intervalBase;
+
+
+							AudioSource.PlayClipAtPoint(missileShot, Camera.main.transform.position);
 						}
 						
 						gunScript.interval -= Time.deltaTime;

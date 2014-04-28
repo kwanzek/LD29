@@ -13,6 +13,8 @@ public class EnemyBehavior : MonoBehaviour {
 	float curTimer;
 	float deathTimer = .33f;
 
+	public AudioClip explosion;
+
 	Vector3 currentRotation;
 
 	int health;
@@ -25,11 +27,9 @@ public class EnemyBehavior : MonoBehaviour {
 		curTimer = 3.0f;
 		targetPoint = new Vector2(200, -100);
 
-		health = Random.Range(3,5);
+		health = Random.Range(3, 6);
 
 		currentRotation = new Vector3(0,0,0);
-			//new Vector2(Random.Range(this.transform.position.x - 50, this.transform.position.x+50),
-		              //            Random.Range (this.transform.position.y-50, this.transform.position.y+50));
 	}
 	
 	// Update is called once per frame
@@ -115,6 +115,8 @@ public class EnemyBehavior : MonoBehaviour {
 				Debug.Log ("Missile Hit");
 				toBeDeleted.Add(missile);
 				health--;
+
+					AudioSource.PlayClipAtPoint(explosion, this.transform.position);
 			}
 
 		}
