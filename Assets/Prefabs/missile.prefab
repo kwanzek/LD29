@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 212: {fileID: 21200000}
   - 114: {fileID: 11400000}
+  - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: missile
   m_TagString: Projectile
@@ -41,6 +42,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   angleVector: {x: 0, y: 0, z: 0}
+--- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b322b03385674e14a9f44af7b86d06da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bubble1: {fileID: 100000, guid: a926c651f5725f544ac8d083e62bdc6d, type: 2}
+  bubble2: {fileID: 100000, guid: 4452240a65a9fe24fa8a1e271cfe15b6, type: 2}
+  bubble3: {fileID: 100000, guid: 4c35375753c45ab428f4f7331f1d7712, type: 2}
+  bubble4: {fileID: 100000, guid: d30208fd993e1a94c868191587f5eefa, type: 2}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
