@@ -25,6 +25,15 @@ public class Spaceship : MonoBehaviour {
 	private int tileX = 32;
 	private int tileY = 32;
 
+	private Vector2 centerofMass;
+	private int totalMass;
+
+	private Vector2 shipVelocity;
+	private float shipAngle;
+	private float shipAngularVelocity = 18.0f;
+
+	private float coeffKineticFriction = 0.6f;
+
 	int[,] shipMap = new int[,]
 	{
 		{0,0,0,0,0},
@@ -92,6 +101,9 @@ public class Spaceship : MonoBehaviour {
 		maxWidth = calculateMaxWidth();
 		maxHeight = calculateMaxHeight();
 
+
+		shipVelocity = new Vector2(0,0);
+		shipAngle = 0;
 		//Debug.Log ("ShipComponentLength0: "+ shipMap.GetLength(0) + ", shipcomponentLength1: "+ shipMap.GetLength(1));
 
 
@@ -165,11 +177,110 @@ public class Spaceship : MonoBehaviour {
 		//temp.circuitBoardScript = circuitBoardScript;
 		//temp.enabled = true;
 
+		centerofMass = computeCenterOfMass();
+
+
 	}
 
 
 
+	Vector2 computeCenterOfMass()
+	{
+		int massTotal = 0;
+		Vector2 weightedMass = new Vector2(0,0);
 
+		foreach(GameObject obj in componentArray)
+		{
+			if(obj != null)
+			{
+				ShipComponent shipComponent = obj.GetComponent("ShipComponent") as ShipComponent;
+				massTotal += shipComponent._mass;
+				weightedMass.x+=(obj.transform.position.x * shipComponent._mass);
+				weightedMass.y+=(obj.transform.position.y * shipComponent._mass);
+			}
+		}
+
+		weightedMass.x /= massTotal;
+		weightedMass.y /= massTotal;
+
+		totalMass = massTotal;
+
+		//Debug.Log ("CenterofMass: " + weightedMass);
+
+		return weightedMass;
+
+	}
+
+	Vector2 sumOfForces()
+	{
+		Vector2 forceSum = new Vector2(0,0);
+		foreach(GameObject obj in circuitBoardScript.componentArray)
+		{
+			if(obj != null)
+			{
+				if(obj.name.Contains("thruster"))
+				{
+
+
+
+					Thruster circuitComponent = obj.GetComponent("Thruster") as Thruster;
+
+					GameObject shipObj = componentArray[circuitComponent.index_Row, circuitComponent.index_Column];
+
+
+
+					if(circuitComponent._powerLevel > 0)
+					{
+						float thrusterAngle = shipObj.transform.localEulerAngles.z-shipAngle;
+						while(thrusterAngle < 0)
+						{
+							thrusterAngle+=360;
+						}
+						while(thrusterAngle > 360)
+							thrusterAngle-= 360; 
+
+						thrusterAngle=thrusterAngle*Mathf.Deg2Rad + Mathf.PI/2;
+					
+						Vector2 forceVector = new Vector2(circuitComponent.speed * Mathf.Cos(thrusterAngle), 
+						                                  circuitComponent.speed * Mathf.Sin(thrusterAngle));
+						forceSum.x += forceVector.x;
+						forceSum.y += forceVector.y;
+
+						//massTotal += shipComponent._mass;
+						//weightedMass.x+=(obj.transform.position.x * shipComponent._mass);
+						//weightedMass.y+=(obj.transform.position.y * shipComponent._mass);
+					}
+				}
+			}
+		}
+
+		//Friction
+
+		Vector2 frictionForce = new Vector2(-1*coeffKineticFriction*shipVelocity.x, -1*coeffKineticFriction*shipVelocity.y);
+
+		forceSum.x+=frictionForce.x;
+		forceSum.y+=frictionForce.y;
+
+		forceSum.x /= totalMass;
+		forceSum.y /= totalMass;
+
+		//Debug.Log (forceSum);
+
+		return forceSum;
+	}
+
+
+
+	Vector2 rotateVector(Vector2 vector, float theta)
+	{
+
+		theta*=Mathf.Deg2Rad;
+		vector.x = Mathf.Cos (theta)* vector.x-Mathf.Sin(theta) * vector.y;
+		vector.y = Mathf.Sin (theta)*vector.x +Mathf.Cos (theta)*vector.y;
+
+		return vector;
+
+	}
 
 
 
@@ -212,25 +323,139 @@ public class Spaceship : MonoBehaviour {
 			}
 		}
 
+
 		//Movement
-		if(numThrusters > 0)
+
+
+		sumOfForces();
+
+
+		GameObject thruster1 = null;
+		GameObject thruster2 = null;
+
+		bool thruster1Active = false;
+		bool thruster2Active = false;
+
+		foreach(GameObject obj in circuitBoardScript.componentArray)
 		{
-			foreach(GameObject obj in componentArray)
+			if(obj != null)
 			{
-				if(obj != null)
+				if(obj.name.Contains("thruster"))
 				{
-					obj.transform.position = new Vector2(obj.transform.position.x,
-					                                      obj.transform.position.y +(_speed*numThrusters*Time.deltaTime));
+					if(thruster1 == null)
+						thruster1 = obj;
+					else if(thruster2 == null)
+						thruster2 = obj;
+					Thruster thrusterScript = obj.GetComponent("Thruster") as Thruster;
+					if(thrusterScript._powerLevel > 0)
+					{
+						if(obj == thruster1)
+							thruster1Active = true;
+						else if(obj == thruster2)
+							thruster2Active = true;
+
+
+
+
+						
+					}
 				}
 			}
-			this.transform.position = new Vector2(this.transform.position.x,
-			                                      this.transform.position.y +(_speed*numThrusters*Time.deltaTime));
-
-			followship.moveSelf(0, _speed*numThrusters*Time.deltaTime);
-			circuitBoardScript.translateAll(0, _speed*numThrusters*Time.deltaTime);
-
-			//Debug.Log (this.transform.position);
 		}
+
+		//centerofMass = computeCenterOfMass();
+
+		if(thruster1Active && !thruster2Active)
+		{
+			//rotate right
+			shipAngle -= shipAngularVelocity * Time.deltaTime;
+		}
+		else if(!thruster1Active && thruster2Active)
+		{
+			shipAngle += shipAngularVelocity * Time.deltaTime;
+			//rotate left
+		}
+
+		foreach(GameObject compObj in componentArray)
+		{
+			if(compObj != null)
+			{
+				Vector2 differenceVector = new Vector2( compObj.transform.position.x - centerofMass.x,
+				                                       compObj.transform.position.y - centerofMass.y);
+
+
+
+				//Vector2 newVector = rotateVector(differenceVector, shipAngle);
+
+				//float angleDiff = Mathf.Atan2(differenceVector.y, differenceVector.x);
+
+				Vector2 blockVector = new Vector2( compObj.transform.position.x - centerofMass.x,
+				                                    compObj.transform.position.y - centerofMass.y);
+
+
+				//Debug.Log ("Block Vector: " + blockVector);
+
+				float angleDifference = shipAngle-  compObj.transform.localEulerAngles.z;
+
+				float tempAngle = (angleDifference * Mathf.Deg2Rad);
+
+				compObj.transform.localEulerAngles = new Vector3(0,0, shipAngle);
+
+
+
+				//Debug.Log ("tempAngle: " + tempAngle + ", shipAngle: " + shipAngle);
+
+
+				/*var rotatedX = Math.cos(angle) * (point.x - center.x) - Math.sin(angle) * (point.y-center.y) + center.x;
+
+var rotatedY = Math.sin(angle) * (point.x - center.x) + Math.cos(angle) * (point.y - center.y) + center.y;*/
+
+				float rotatedX = (Mathf.Cos (tempAngle)*(blockVector.x)) -
+					(Mathf.Sin (tempAngle) * (blockVector.y)) + centerofMass.x;
+
+				float rotatedY = (Mathf.Sin (tempAngle)*(blockVector.x)) +
+					(Mathf.Cos (tempAngle) * (blockVector.y)) + centerofMass.y;
+
+				//Debug.Log (tempAngle);
+				//Debug.Log("Sine: "  + Mathf.Sin(tempAngle));
+				//Debug.Log ("Cosine: " + Mathf.Cos (tempAngle));
+				//Debug.Log ("Block vector y: " + blockVector.y);
+				//Debug.Log ("Center of Mass Y : " + centerofMass.y);
+				//Debug.Log("Transform position: " + compObj.transform.position);
+
+
+				compObj.transform.position = new Vector2(rotatedX, rotatedY);//new Vector2((Mathf.Cos(tempAngle)*32) + blockVector.x,
+				                             //            (Mathf.Sin (tempAngle)*32) + blockVector.y);
+					//new Vector2(rotatedX, rotatedY);
+
+			}
+		}
+
+		//Debug.Log ("Center of Mass: " + centerofMass);
+		//this.transform.position = new Vector2(this.transform.position.x,
+		//                                      this.transform.position.y +(_speed*numThrusters*Time.deltaTime));
+
+		this.transform.localEulerAngles = new Vector3(0,0,shipAngle);
+
+		//followship.moveSelf(0, _speed*numThrusters*Time.deltaTime);
+		//circuitBoardScript.translateAll(0, _speed*numThrusters*Time.deltaTime);
+
+		//Debug.Log (this.transform.position);
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
 
 		//Firing
 		foreach(GameObject obj in circuitArray)
@@ -245,7 +470,6 @@ public class Spaceship : MonoBehaviour {
 				
 						if(gunScript.interval <= 0.0)
 						{
-							Debug.Log ("made missile");
 
 							GameObject mirror = componentArray[gunScript.index_Row, gunScript.index_Column];
 
