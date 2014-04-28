@@ -18,7 +18,6 @@ public class MissileScript : MonoBehaviour {
 	void Update () {
 		if(angleVector != null)
 		{
-			Debug.Log (angleVector);
 			float angle = angleVector.z*Mathf.Deg2Rad+Mathf.PI/2;
 
 			this.transform.position = new Vector2(this.transform.position.x + Mathf.Cos(angle)*Time.deltaTime*speed,
