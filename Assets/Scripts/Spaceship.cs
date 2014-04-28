@@ -120,7 +120,7 @@ public class Spaceship : MonoBehaviour {
 
 		for(int i = 0; i < shipMap.GetLength(0); ++i)
 		{
-			xPosition = -200;
+			xPosition = -300;
 			for(int j = 0; j < shipMap.GetLength(1); ++j)
 			{
 
@@ -438,6 +438,65 @@ public class Spaceship : MonoBehaviour {
 
 
 
+		//Check collisions
+
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+
+
+
+		//Bounds boundingBox = renderer.bounds;
+		//Vector3 extents = boundingBox.extents;
+		//Rect boundingRect = new Rect(boundingBox.center.x-extents.x, boundingBox.center.y-extents.y,
+		 //                            extents.x*1.8f, extents.y*1.8f);
+
+		//Debug.Log (enemies[0].name);
+
+		foreach(GameObject enemy in enemies)
+		{
+			Bounds tileBoundingBox = enemy.renderer.bounds;
+			Vector3 tileExtents = tileBoundingBox.extents;
+
+			Rect tileBoundingRect = new Rect(tileBoundingBox.center.x-tileExtents.x,
+			                                 tileBoundingBox.center.y-tileExtents.y, tileExtents.x*1.15f, tileExtents.y*1.35f);
+
+
+			foreach(GameObject block in componentArray)
+			{
+				if (block != null)
+				{
+
+					Bounds blockBoundingBox = block.renderer.bounds;
+					Vector3 blockExtents = blockBoundingBox.extents;
+					
+					Rect blockBoundingRect = new Rect(blockBoundingBox.center.x-blockExtents.x,
+					                                  blockBoundingBox.center.y-blockExtents.y, 
+					                                  blockExtents.x*1.6f, blockExtents.y*1.6f);
+
+					bool isIntersecting = doesIntersect(blockBoundingRect,tileBoundingRect);
+
+					if(isIntersecting)
+					{
+						Debug.Log ("COLLISION");
+						shipVelocity.x *= .95f;
+						shipVelocity.y *= .95f;
+						EnemyBehavior enBehScript = enemy.GetComponent("EnemyBehavior") as EnemyBehavior;
+
+						enBehScript.currentSpeed *= 0.9995f;
+					}
+
+				}
+			}
+
+
+
+
+		}
+
+
+
+
+
 
 		foreach(GameObject compObj in componentArray)
 		{
@@ -453,6 +512,10 @@ public class Spaceship : MonoBehaviour {
 		
 		followship.moveSelf(newLoc.x, newLoc.y);
 		circuitBoardScript.translateAll(newLoc.x, newLoc.y);
+
+		GameObject console = GameObject.FindGameObjectWithTag("Console");
+
+		console.transform.Translate(new Vector3(newLoc.x, newLoc.y, 0));
 		
 		//Debug.Log (shipVelocity);
 
@@ -520,6 +583,21 @@ public class Spaceship : MonoBehaviour {
 	}
 
 
+
+			
+			bool doesIntersect(Rect player, Rect obj)
+			{
+				Vector2 playerTopLeft = new Vector2(player.center.x-player.width/2, player.center.y+player.height/2);
+				Vector2 playerBottomRight = new Vector2(player.center.x+player.width/2, player.center.y-player.height/2);
+				
+				Vector2 objectTopLeft = new Vector2(obj.center.x-obj.width/2, obj.center.y+obj.height/2);
+				Vector2 objectBottomRight = new Vector2(obj.center.x+obj.width/2, obj.center.y-obj.height/2);
+				
+				
+				
+				return (playerTopLeft.x < objectBottomRight.x && playerTopLeft.y > objectBottomRight.y) &&
+					(playerBottomRight.x > objectTopLeft.x && playerBottomRight.y < objectTopLeft.y);
+			}
 
 
 

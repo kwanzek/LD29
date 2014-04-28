@@ -5,7 +5,7 @@ public class EnemyBehavior : MonoBehaviour {
 
 	public Vector2 targetPoint;
 	float maxSpeed;
-	float currentSpeed;
+	public float currentSpeed;
 	float acceleration;
 	float angularRotation = 0.3f;
 	float curTimer;
@@ -37,6 +37,8 @@ public class EnemyBehavior : MonoBehaviour {
 		}
 		if(currentSpeed > differenceVector.magnitude && differenceVector.magnitude < maxSpeed)
 			currentSpeed = differenceVector.magnitude;
+
+
 
 
 	

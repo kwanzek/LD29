@@ -20,7 +20,7 @@ public class CircuitBoard : MonoBehaviour {
 	public GameObject circuitPowerSupplyPrefab;
 	public GameObject circuitThrusterPrefab;
 
-	private int circuitBoardWidth = 300;
+	private int circuitBoardWidth = 480;
 	//private int circuitBoardHeight = 720;
 	private int screenWidth = 1280;
 	//private int screenHeight = 720;
@@ -59,7 +59,7 @@ public class CircuitBoard : MonoBehaviour {
 
 		actualGraphic = (GameObject) Instantiate(circuitboardPrefab, new Vector3(screenWidth/2-circuitBoardWidth/2,
 		                                                                         0, 0f), Quaternion.identity);
-
+		actualGraphic.transform.localScale = new Vector2(1.5f,1f);
 	}
 
 	
@@ -443,7 +443,7 @@ public class CircuitBoard : MonoBehaviour {
 		int yOffset = (int)Mathf.Ceil(7/2.0f)-1;
 
 		//Debug.Log ("xOffset: " + xOffset + ", yOffset: " + yOffset);
-		int baseXPosition = 490-(xOffset*tempTileWidth);
+		int baseXPosition = 380-(xOffset*tempTileWidth);
 		if(maxWidth % 2 == 0)
 			baseXPosition-=(tempTileWidth/2);
 
