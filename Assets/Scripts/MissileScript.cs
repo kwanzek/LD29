@@ -16,15 +16,15 @@ public class MissileScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(angleVector != null)
-		{
+		//if(angleVector != null)
+		//{
 			float angle = angleVector.z*Mathf.Deg2Rad+Mathf.PI/2;
 
 			this.transform.position = new Vector2(this.transform.position.x + Mathf.Cos(angle)*Time.deltaTime*speed,
 			                                      this.transform.position.y + Mathf.Sin (angle) * Time.deltaTime * speed);
 
 			//this.transform.Translate(new Vector3(Mathf.Cos(angle)*Time.deltaTime,  Mathf.Sin (angle)*Time.deltaTime,    0));
-		}
+		//}
 
 		lifeTimer -= Time.deltaTime;
 

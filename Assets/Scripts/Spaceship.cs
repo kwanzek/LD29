@@ -25,7 +25,7 @@ public class Spaceship : MonoBehaviour {
 	private int tileX = 32;
 	private int tileY = 32;
 
-	private Vector2 centerofMass;
+	public Vector2 centerofMass;
 	private int totalMass;
 
 	private Vector2 shipVelocity;
@@ -95,8 +95,8 @@ public class Spaceship : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_speed = 50;
-		_rotation_speed = 90;
+		//_speed = 50;
+		//_rotation_speed = 90;
 		_maxSpeed = 10;
 
 		maxWidth = calculateMaxWidth();
@@ -381,10 +381,8 @@ public class Spaceship : MonoBehaviour {
 		{
 			if(compObj != null)
 			{
-				Vector2 differenceVector = new Vector2( compObj.transform.position.x - centerofMass.x,
-				                                       compObj.transform.position.y - centerofMass.y);
-
-
+				//Vector2 differenceVector = new Vector2( compObj.transform.position.x - centerofMass.x,
+				//                                       compObj.transform.position.y - centerofMass.y);
 
 				//Vector2 newVector = rotateVector(differenceVector, shipAngle);
 

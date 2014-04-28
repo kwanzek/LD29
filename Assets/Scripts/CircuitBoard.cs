@@ -29,7 +29,6 @@ public class CircuitBoard : MonoBehaviour {
 	private int maxHeight;
 
 	private int tileX = 64;
-	private int tileY = 64;
 
 	private int timestamp = 1;
 
@@ -436,8 +435,6 @@ public class CircuitBoard : MonoBehaviour {
 
 		//float tempTileScaleY = (float)tempTileHeight / (tileY+8);
 		float tempTileScaleX = (float)(tempTileWidth) / (tileX+8);
-
-		//Debug.Log ("TempTileWidth: " + tempTileWidth + ", TempTileHeight: " + tempTileHeight);
 
 		int xOffset = (int)Mathf.Ceil(5/2.0f)-1;
 		int yOffset = (int)Mathf.Ceil(7/2.0f)-1;
